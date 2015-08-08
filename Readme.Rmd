@@ -2,12 +2,33 @@
 title: "Clubnika"
 author: "Oleksii"
 date: "July 29, 2015"
-output: html_document
 ---
+## How to use
+* 1. Grab chat once at day:
+```{sh}
+/usr/bin/python grab_chat.py
+```
+In results will be created (appended) *clubnica.txt* file with the last chat messages and updated file *timestamp.txt* with the last message's timestamp
 
-## Project's directory: 
-*/Users/alex/Documents/Research/Clubnica*
+* 2. Split to "with phone numbers" and "without phone numbers"
+```{sh}
+/usr/bin/python phone_number_extractor.py
+```
+Messages from the *clubnica.txt* file will be splitted to the files *phones.txt* for the messages with the phone numbers and *no_phones.txt* for the messages without phone numbers. 
 
+## Debug: 
+* 1. Check out messages without phone numbers were correctly placed in file *no_phones.txt*
+```{sh}
+ for i in $(cat mobile_codes.txt) ; do grep $i -r no_phones.txt ; done > del.txt
+```
+* 2. To swich grab_chat.py in debug mode change 
+```{sh}
+DEBUG = 0
+```
+to 
+```{sh}
+DEBUG = 1
+```
 ## Raw corpus file:  
 *Corpus.txt*
 
