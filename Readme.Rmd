@@ -1,0 +1,27 @@
+---
+title: "Clubnika"
+author: "Oleksii"
+date: "July 29, 2015"
+output: html_document
+---
+
+## Project's directory: 
+*/Users/alex/Documents/Research/Clubnica*
+
+## Raw corpus file:  
+*Corpus.txt*
+
+## Convert Corpus's text to lower case:
+```{sh}
+tr  "[:upper:]" "[:lower:]"< Corpus_uniq.txt
+```
+
+## Remove punctuation symbols
+```{sh}
+tr "[:punct:]" " "< Corpus_uniq_lower.txt | sort -u
+```
+
+## Tokenize
+```{sh}
+
+```
