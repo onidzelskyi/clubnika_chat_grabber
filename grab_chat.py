@@ -18,13 +18,15 @@ conn = sqlite3.connect('clubnika.db')
 
 work_dir = os.path.dirname(os.path.abspath(__file__))
 ts_file = "/timestamp.txt"
+deep_file = "/deep.txt"
 url = "http://clubnika.com.ua/home/"
+
 # Empirical value
 MAX_STEP_SIZE = 7
 
 
 CHECK_PHONE = 1
-CLASSIFY = 1
+CLASSIFY = 0
 
 
 def createDB():
@@ -93,6 +95,10 @@ def fetchMsg():
     old_checkpoint = codecs.open(work_dir+ts_file, encoding="utf-8").read() if os.path.exists(work_dir+ts_file) else ''
     new_checkpoint = ''
 
+    # Deep
+    old_deep = open(work_dir+deep_file, "r").read() if os.path.exists(work_dir+deep_file) else -1
+    i = 1 if (int(old_deep)==-1) else int(old_deep)
+
     s = Session()
 
     header = {}
@@ -110,11 +116,10 @@ def fetchMsg():
 
     resp = s.send(prepped)
     browser = webdriver.Chrome()
-    i = 1
     s1 = Session()
     completed = False
-    batch = []
-    while(1):
+    while(not completed):
+        batch = []
         url_tv_chat = "http://clubnika.com.ua/tv-chat/?action=view&room=1&page=" + str(i)
         req1 = Request('GET', url_tv_chat, cookies=resp.cookies, headers=header)
         prepped1 = req1.prepare()
@@ -123,7 +128,6 @@ def fetchMsg():
         prepped1.headers["Accept"] = "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"
         prepped1.headers["User-Agent"] = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_4) AppleWebKit/600.7.12 (KHTML, like Gecko) Version/8.0.7 Safari/600.7.12"
         resp1 = s1.send(prepped1)
-
         open("/tmp/clubnika.html", "wb").write(resp1.content)
         browser.get("file:///tmp/clubnika.html")
         sel = Selector(text = browser.page_source)
@@ -151,7 +155,11 @@ def fetchMsg():
         if CLASSIFY:
             batch = classify(batch)
         saveEntry(batch)
+        
+        # Save current deep
+        open(work_dir+deep_file, "w").write(str(i))
         i = i+1
+
 
 
 if __name__ == "__main__":
