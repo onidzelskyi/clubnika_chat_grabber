@@ -12,7 +12,7 @@ import sqlite3
 import re
 import requests
 import json
-
+from dateutil import parser
 
 conn = sqlite3.connect('clubnika.db')
 
@@ -31,7 +31,7 @@ CLASSIFY = 0
 
 def createDB():
     c = conn.cursor()
-    c.execute("CREATE TABLE IF NOT EXISTS messages(timestamp TEXT, msg TEXT, phone TEXT, label TEXT)")
+    c.execute("CREATE TABLE IF NOT EXISTS messages(timestamp DATE, msg TEXT, phone TEXT, label TEXT)")
 
 
 def saveEntry(batch):
@@ -64,8 +64,9 @@ def checkPhone(batch):
             elif len(phone):
                 i = i+1
 
-            if len(phone):
-                phones.append(phone)
+        if len(phone):
+            phones.append(phone)
+        
         lst = list(entry)
         a = [phone for phone in phones if len(phone)>8]
         lst[2] = a[0] if len(a) else ""
@@ -141,7 +142,7 @@ def fetchMsg():
                     cur_ts = sel1.xpath("//small/text()").extract()[0]
                     msg_body = msg_body[0].replace('\n', ' ').replace('\r', '').replace(',', ' ')
                     check_point = cur_ts + "," + msg_body
-                    batch.append((cur_ts, msg_body, '', '',))
+                    batch.append((parser.parse(cur_ts), msg_body, '', '',))
                     if new_checkpoint=="":
                         new_checkpoint = check_point
                         if old_checkpoint=="":
