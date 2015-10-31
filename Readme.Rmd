@@ -2,6 +2,7 @@
 title: "Clubnika"
 author: "Oleksii"
 date: "July 29, 2015"
+Updated: "October 31, 2015"
 ---
 ## How to use
 * 1. Grab chat once at day:
