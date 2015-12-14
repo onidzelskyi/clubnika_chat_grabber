@@ -8,13 +8,39 @@ date: "July 29, 2015"
 ```{sh}
 /usr/bin/python grab_chat.py
 ```
-In results will be created (appended) *clubnica.txt* file with the last chat messages and updated file *timestamp.txt* with the last message's timestamp
+In results will be:
+  - created (appended) *clubnika.db* db with the chat messages;
+  - created (updated) file *timestamp.txt* with the last message's timestamp
+  - created (updated) file *deep.txt* with the last parsed chat's page
 
-* 2. Split to "with phone numbers" and "without phone numbers"
+* 2. Save corpus to file *corpus.txt* from db:
 ```{sh}
-/usr/bin/python phone_number_extractor.py
+sqlite3 clubnika.db
+sqlite> .output corpus.txt
+sqlite> select msg  from messages;
+sqlite> .exit
 ```
-Messages from the *clubnica.txt* file will be splitted to the files *phones.txt* for the messages with the phone numbers and *no_phones.txt* for the messages without phone numbers. 
+
+* 2. Convert corpus file to lower case:
+```{sh}
+tr  "[:upper:]" "[:lower:]"< Corpus.txt > Corpus_lower.txt
+```
+
+* 3. Delete duplicates from corpus file:
+```{sh}
+cat Corpus_lower.txt | sort -u > Corpus_lower_uniq.txt
+```
+
+* 4. Remove punctuation:
+```{sh}
+tr "[:punct:]" " "< Corpus_lower_uniq.txt | sort -u > Corpus_lower_uniq_no_punct.txt
+```
+
+* 5. Calculate word's frequence:
+```{sh}
+cat Corpus_lower_uniq_no_punct.txt | tr ' ' '\n' | sort | uniq -c | sort -nr | head -20
+```
+
 
 ## Debug: 
 * 1. Check out messages without phone numbers were correctly placed in file *no_phones.txt*

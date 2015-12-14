@@ -21,6 +21,9 @@ ts_file = "/timestamp.txt"
 deep_file = "/deep.txt"
 url = "http://clubnika.com.ua/home/"
 
+# Add current path to PATH environment variable for chrome driver
+os.environ["PATH"] += os.pathsep + work_dir
+
 # Empirical value
 MAX_STEP_SIZE = 7
 
