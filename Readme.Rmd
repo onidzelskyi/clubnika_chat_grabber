@@ -4,6 +4,12 @@ author: "Oleksii"
 date: "July 29, 2015"
 Updated: "October 31, 2015"
 ---
+
+## Prerequests
+
+    sudo apt-get install python-pip python-dev python-lxml
+    sudo pip install scrapy w3lib cssselect selenium python-dateutil
+
 ## How to use
 * 1. Grab chat once at day:
 ```{sh}
