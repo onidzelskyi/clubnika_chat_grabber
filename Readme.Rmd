@@ -9,6 +9,13 @@ Updated: "October 31, 2015"
 
     sudo apt-get install python-pip python-dev python-lxml
     sudo pip install scrapy w3lib cssselect selenium python-dateutil
+    
+    chromedriver
+    https://sites.google.com/a/chromium.org/chromedriver/home
+    sudo apt-get install unzip
+    wget http://chromedriver.storage.googleapis.com/2.20/chromedriver_linux64.zip
+    unzip chromedriver_linux64.zip
+    
 
 ## How to use
 * 1. Grab chat once at day:
