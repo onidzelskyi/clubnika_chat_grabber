@@ -13,6 +13,9 @@ import re
 import requests
 import json
 from dateutil import parser
+# Start display before Chrome browser
+from pyvirtualdisplay import Display
+
 
 conn = sqlite3.connect('clubnika.db')
 
@@ -119,6 +122,8 @@ def fetchMsg():
     prepped.headers["User-Agent"] = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_4) AppleWebKit/600.7.12 (KHTML, like Gecko) Version/8.0.7 Safari/600.7.12"
 
     resp = s.send(prepped)
+    display = Display(visible=0, size=(800, 800))  
+    display.start()
     browser = webdriver.Chrome()
     s1 = Session()
     completed = False
@@ -141,7 +146,7 @@ def fetchMsg():
             name = sel1.xpath('//div[@class="p10"]/b/text()').extract()
             if len(name)==0 or name[0] !=  u'\u041c\u043e\u0434\u0435\u0440':
                 msg_body = sel1.xpath("//span[@class='c1']/text()").extract()
-                if len(msg_body):
+                if len(msg_body) and len(sel1.xpath("//small/text()").extract()):
                     cur_ts = sel1.xpath("//small/text()").extract()[0]
                     msg_body = msg_body[0].replace('\n', ' ').replace('\r', '').replace(',', ' ')
                     check_point = cur_ts + "," + msg_body
