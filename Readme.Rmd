@@ -8,7 +8,7 @@ Updated: "October 31, 2015"
 ## Prerequests
 
     sudo apt-get install python-pip python-dev python-lxml
-    sudo pip install scrapy w3lib cssselect selenium python-dateutil
+    sudo pip install scrapy w3lib cssselect selenium python-dateutil pyvirtualdisplay
     
     chromedriver
     https://sites.google.com/a/chromium.org/chromedriver/home
