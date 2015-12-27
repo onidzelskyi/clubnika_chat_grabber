@@ -34,7 +34,7 @@ DEEP_BEGIN = 1
 SQL_CREATE_QUERY = "CREATE TABLE IF NOT EXISTS messages(timestamp DATE, msg TEXT, phone TEXT, label TEXT)"
 EMPTY_CHECKPOINT = ""
 # Timeout between GET requests in seconds
-TIMEOUT = 1
+DEFAULT_TIMEOUT = 1
 # Empirical value for phone extraction
 MAX_STEP_SIZE = 7
 CHECK_PHONE = 1
@@ -93,8 +93,8 @@ class Grab(object):
         s1 = Session()
         completed = False
         while(not completed):
-            time.sleep(TIMEOUT)
-            print "deep: %d" % self.deep
+            time.sleep(self.args.timeout)
+            #print "deep: %d" % self.deep
             batch = []
             url_tv_chat = "http://clubnika.com.ua/tv-chat/?action=view&room=1&page=" + str(self.deep)
             req1 = Request('GET', url_tv_chat, cookies=resp.cookies, headers=header)
@@ -124,7 +124,7 @@ class Grab(object):
                         
                         #if self.old_checkpoint==EMPTY_CHECKPOINT and self.args.update:
                         if self.old_checkpoint==EMPTY_CHECKPOINT or self.outdated():
-                            print "Outdated"
+                            #print "Outdated"
                             with open(self.work_dir+self.timestamp_file, "w") as f:
                                 f.write(self.new_checkpoint.encode("utf8"))
                         #print "%s\n%s\n\n" % (self.old_checkpoint.strip('\n'), check_point.strip('\n'))
@@ -173,8 +173,8 @@ class Grab(object):
 
     # save last available deep
     def outdated(self):
-        print "self.old_checkpoint: ", self.old_checkpoint
-        print "self.new_checkpoint: ", self.new_checkpoint
+        #print "self.old_checkpoint: ", self.old_checkpoint
+        #print "self.new_checkpoint: ", self.new_checkpoint
         return True if self.args.update and self.old_checkpoint!=self.new_checkpoint else False
     
     ##
@@ -182,8 +182,9 @@ class Grab(object):
     #
     def parseArgs(self):
         parser = argparse.ArgumentParser(description="Parse image files.")
-        parser.add_argument("-u", "--update", action="store_true", help = "update by the new messages")
-        parser.add_argument("-d", "--dig", action="store_true", help = "continue form stop point")
+        parser.add_argument("-u", "--update", action="store_true", help="update by the new messages")
+        parser.add_argument("-d", "--dig", action="store_true", help="continue form stop point")
+        parser.add_argument("-t", "--timeout", default=DEFAULT_TIMEOUT, type=int, help="continue form stop point")
         self.args = parser.parse_args()
         # if neither flags set
         # or set both of them
@@ -256,7 +257,7 @@ def main():
     except Exception as e:
         print e
     finally:
-        if grab.args.dig: grab.saveDeep()
+        if hasattr(grab, "args") and grab.args.dig: grab.saveDeep()
 
 
 
