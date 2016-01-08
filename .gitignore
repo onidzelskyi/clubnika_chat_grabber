@@ -2,3 +2,4 @@ chromedriver
 clubnika.db
 deep.txt
 timestamp.txt
+*.pyc
