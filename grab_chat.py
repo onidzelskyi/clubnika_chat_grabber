@@ -94,7 +94,7 @@ class Grab(object):
         completed = False
         while(not completed):
             time.sleep(TIMEOUT)
-            print "deep: %d" % self.deep
+            #print "deep: %d" % self.deep
             batch = []
             url_tv_chat = "http://clubnika.com.ua/tv-chat/?action=view&room=1&page=" + str(self.deep)
             req1 = Request('GET', url_tv_chat, cookies=resp.cookies, headers=header)
@@ -124,7 +124,7 @@ class Grab(object):
                         
                         #if self.old_checkpoint==EMPTY_CHECKPOINT and self.args.update:
                         if self.old_checkpoint==EMPTY_CHECKPOINT or self.outdated():
-                            print "Outdated"
+                            #print "Outdated"
                             with open(self.work_dir+self.timestamp_file, "w") as f:
                                 f.write(self.new_checkpoint.encode("utf8"))
                         #print "%s\n%s\n\n" % (self.old_checkpoint.strip('\n'), check_point.strip('\n'))
@@ -173,8 +173,8 @@ class Grab(object):
 
     # save last available deep
     def outdated(self):
-        print "self.old_checkpoint: ", self.old_checkpoint
-        print "self.new_checkpoint: ", self.new_checkpoint
+        #print "self.old_checkpoint: ", self.old_checkpoint
+        #print "self.new_checkpoint: ", self.new_checkpoint
         return True if self.args.update and self.old_checkpoint!=self.new_checkpoint else False
     
     ##
