@@ -117,7 +117,9 @@ class NaiveBayes(object):
             for key in predicted.keys(): predicted[key] += math.log(self.classes[key])
             estim = sorted(predicted, key=predicted.get, reverse=True)
             if test: print predicted
-            res.append((text, estim[0][0],))
+            # if no text present classify is empty
+            if len(estim):
+                res.append((text, estim[0][0],))
             #res.append((text, "male" if male+math.log(self.PM)>female+math.log(self.PF) else "female",))
             #print "Male: %.12f, female: %12f" % (male+math.log(self.PM), female+math.log(self.PF))
         return res
