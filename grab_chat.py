@@ -31,7 +31,7 @@ SERVICE_URL = "http://clubnika.com.ua/home/"
 # We start to grab form first page
 DEEP_BEGIN = 1
 # sql query to create table for storing the data we recieve from the service
-SQL_CREATE_QUERY = "CREATE TABLE IF NOT EXISTS messages(timestamp DATE, msg TEXT, phone TEXT, label TEXT)"
+SQL_CREATE_QUERY = "CREATE TABLE IF NOT EXISTS messages(timestamp DATE, published TEXT, msg TEXT, phone TEXT, label TEXT)"
 EMPTY_CHECKPOINT = ""
 # Timeout between GET requests in seconds
 TIMEOUT = 1
@@ -117,7 +117,7 @@ class Grab(object):
                         cur_ts = sel1.xpath("//small/text()").extract()[0]
                         msg_body = msg_body[0].replace('\n', ' ').replace('\r', '').replace(',', ' ')
                         check_point = cur_ts + "," + msg_body
-                        batch.append((parser.parse(cur_ts), msg_body, '', '',))
+                        batch.append((time.mktime(time.strptime(cur_ts, "%d.%m.%y %H:%M")), cur_ts, msg_body, '', '',))
                         
                         # At the first touch save new checkpoint
                         if self.new_checkpoint==EMPTY_CHECKPOINT: self.new_checkpoint = check_point.strip("\n")
@@ -163,7 +163,7 @@ class Grab(object):
 
     def saveEntry(self, batch):
         with self.conn as cur:
-            cur.executemany("INSERT INTO messages VALUES(?,?,?,?)",batch)
+            cur.executemany("INSERT INTO messages VALUES(?,?,?,?,?)",batch)
         #conn.commit()
 
     # save last available deep
