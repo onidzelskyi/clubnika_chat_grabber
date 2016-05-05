@@ -104,6 +104,7 @@ class Grab(object):
             prepped1.headers["Accept"] = "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"
             prepped1.headers["User-Agent"] = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_4) AppleWebKit/600.7.12 (KHTML, like Gecko) Version/8.0.7 Safari/600.7.12"
             resp1 = s1.send(prepped1)
+            import pdb; pdb.set_trace()
             open("/tmp/clubnika.html", "wb").write(resp1.content)
             browser.get("file:///tmp/clubnika.html")
             sel = Selector(text = browser.page_source)
@@ -118,7 +119,7 @@ class Grab(object):
                         msg_body = msg_body[0].replace('\n', ' ').replace('\r', '').replace(',', ' ')
                         check_point = cur_ts + "," + msg_body
                         batch.append((parser.parse(cur_ts), msg_body, '', '',))
-                        
+                        print(batch)
                         # At the first touch save new checkpoint
                         if self.new_checkpoint==EMPTY_CHECKPOINT: self.new_checkpoint = check_point.strip("\n")
                         
@@ -163,6 +164,10 @@ class Grab(object):
 
     def saveEntry(self, batch):
         with self.conn as cur:
+            with open("sample.txt", "wb") as fout:
+                fout.write(str(batch))
+                fout.write(str(("INSERT INTO messages VALUES(?,?,?,?)",batch)))
+                os._exit(0)
             cur.executemany("INSERT INTO messages VALUES(?,?,?,?)",batch)
         #conn.commit()
 
