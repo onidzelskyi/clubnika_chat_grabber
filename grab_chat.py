@@ -117,8 +117,9 @@ class Grab(object):
                         cur_ts = sel1.xpath("//small/text()").extract()[0]
                         msg_body = msg_body[0].replace('\n', ' ').replace('\r', '').replace(',', ' ')
                         check_point = cur_ts + "," + msg_body
-                        batch.append((time.mktime(time.strptime(cur_ts, "%d.%m.%y %H:%M")), cur_ts, msg_body, '', '',))
-                        
+                        timestamp = time.mktime(time.strptime(cur_ts, "%d.%m.%y %H:%M"))
+                        batch.append((timestamp, cur_ts, msg_body, '', '',))
+
                         # At the first touch save new checkpoint
                         if self.new_checkpoint==EMPTY_CHECKPOINT: self.new_checkpoint = check_point.strip("\n")
                         
@@ -198,7 +199,7 @@ class Grab(object):
         new_batch = []
         for entry in batch:
             # Omit digits in unicode format
-            str = unicode(entry[1]).replace(u'\u0417', "3")
+            str = unicode(entry[2]).replace(u'\u0417', "3")
             
             # Leave only numbers in string
             str = re.sub("[^0-9]", " ", str)
@@ -223,7 +224,7 @@ class Grab(object):
             
             lst = list(entry)
             a = [phone for phone in phones if len(phone)>8]
-            lst[2] = a[0] if len(a) else ""
+            lst[3] = a[0] if len(a) else ""
             new_batch.append(tuple(lst))
         return new_batch
 
