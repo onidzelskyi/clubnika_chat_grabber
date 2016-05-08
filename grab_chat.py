@@ -31,7 +31,7 @@ SERVICE_URL = "http://clubnika.com.ua/home/"
 # We start to grab form first page
 DEEP_BEGIN = 1
 # sql query to create table for storing the data we recieve from the service
-SQL_CREATE_QUERY = "CREATE TABLE IF NOT EXISTS messages(timestamp DATE, msg TEXT, phone TEXT, label TEXT)"
+SQL_CREATE_QUERY = "CREATE TABLE IF NOT EXISTS messages(timestamp DATE, published TEXT, msg TEXT, phone TEXT, label TEXT)"
 EMPTY_CHECKPOINT = ""
 # Timeout between GET requests in seconds
 TIMEOUT = 1
@@ -118,8 +118,8 @@ class Grab(object):
                         cur_ts = sel1.xpath("//small/text()").extract()[0]
                         msg_body = msg_body[0].replace('\n', ' ').replace('\r', '').replace(',', ' ')
                         check_point = cur_ts + "," + msg_body
-                        batch.append((parser.parse(cur_ts), msg_body, '', '',))
-                        print(batch)
+                        timestamp = time.mktime(time.strptime(cur_ts, "%d.%m.%y %H:%M"))
+                        batch.append((timestamp, cur_ts, msg_body, '', '',))
                         # At the first touch save new checkpoint
                         if self.new_checkpoint==EMPTY_CHECKPOINT: self.new_checkpoint = check_point.strip("\n")
                         
@@ -164,11 +164,7 @@ class Grab(object):
 
     def saveEntry(self, batch):
         with self.conn as cur:
-            with open("sample.txt", "wb") as fout:
-                fout.write(str(batch))
-                fout.write(str(("INSERT INTO messages VALUES(?,?,?,?)",batch)))
-                os._exit(0)
-            cur.executemany("INSERT INTO messages VALUES(?,?,?,?)",batch)
+            cur.executemany("INSERT INTO messages VALUES(?,?,?,?,?)",batch)
         #conn.commit()
 
     # save last available deep
@@ -203,7 +199,7 @@ class Grab(object):
         new_batch = []
         for entry in batch:
             # Omit digits in unicode format
-            str = unicode(entry[1]).replace(u'\u0417', "3")
+            str = unicode(entry[2]).replace(u'\u0417', "3")
             
             # Leave only numbers in string
             str = re.sub("[^0-9]", " ", str)
@@ -228,7 +224,7 @@ class Grab(object):
             
             lst = list(entry)
             a = [phone for phone in phones if len(phone)>8]
-            lst[2] = a[0] if len(a) else ""
+            lst[3] = a[0] if len(a) else ""
             new_batch.append(tuple(lst))
         return new_batch
 
