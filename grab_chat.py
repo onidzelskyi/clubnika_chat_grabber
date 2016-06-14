@@ -18,10 +18,11 @@ from pyvirtualdisplay import Display
 import argparse # Arguments parser
 import time # sleep
 
+from models import db, Message
 
 # Constants
 # File name of sqlite database will be stored
-DB_FILE_NAME = "clubnika.db"
+#DB_FILE_NAME = "clubnika.db"
 # File name of message we start to grab last time
 TIMESTAMP_FILE = "/timestamp.txt"
 # File name of url' page number
@@ -31,7 +32,7 @@ SERVICE_URL = "http://clubnika.com.ua/home/"
 # We start to grab form first page
 DEEP_BEGIN = 1
 # sql query to create table for storing the data we recieve from the service
-SQL_CREATE_QUERY = "CREATE TABLE IF NOT EXISTS messages(timestamp DATE, published TEXT, msg TEXT, phone TEXT, label TEXT)"
+#SQL_CREATE_QUERY = "CREATE TABLE IF NOT EXISTS messages(timestamp DATE, published TEXT, msg TEXT, phone TEXT, label TEXT)"
 EMPTY_CHECKPOINT = ""
 # Timeout between GET requests in seconds
 TIMEOUT = 1
@@ -51,7 +52,7 @@ class Grab(object):
         self.deep = DEEP_BEGIN
         self.old_checkpoint = EMPTY_CHECKPOINT
         self.new_checkpoint = EMPTY_CHECKPOINT
-        self.conn = sqlite3.connect(DB_FILE_NAME)
+        #self.conn = sqlite3.connect(DB_FILE_NAME)
 
     def load(self):
         self.parseArgs()
@@ -65,8 +66,9 @@ class Grab(object):
         self.fetchMsg()
     
     def createDB(self):
-        with self.conn as cur:
-            cur.execute(SQL_CREATE_QUERY)
+        db.create_all()
+        #with self.conn as cur:
+        #    cur.execute(SQL_CREATE_QUERY)
 
     def fetchMsg(self):
         # Create session
@@ -104,7 +106,6 @@ class Grab(object):
             prepped1.headers["Accept"] = "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"
             prepped1.headers["User-Agent"] = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_4) AppleWebKit/600.7.12 (KHTML, like Gecko) Version/8.0.7 Safari/600.7.12"
             resp1 = s1.send(prepped1)
-            import pdb; pdb.set_trace()
             open("/tmp/clubnika.html", "wb").write(resp1.content)
             browser.get("file:///tmp/clubnika.html")
             sel = Selector(text = browser.page_source)
@@ -119,7 +120,10 @@ class Grab(object):
                         msg_body = msg_body[0].replace('\n', ' ').replace('\r', '').replace(',', ' ')
                         check_point = cur_ts + "," + msg_body
                         timestamp = time.mktime(time.strptime(cur_ts, "%d.%m.%y %H:%M"))
-                        batch.append((timestamp, cur_ts, msg_body, '', '',))
+                        message = Message(cur_ts, timestamp, msg_body)
+                        db.session.add(message)
+                        db.session.commit()
+                        #batch.append((timestamp, cur_ts, msg_body, '', '',))
                         # At the first touch save new checkpoint
                         if self.new_checkpoint==EMPTY_CHECKPOINT: self.new_checkpoint = check_point.strip("\n")
                         
@@ -163,8 +167,9 @@ class Grab(object):
             self.deep = long(open(self.work_dir+self.deep_file).read())
 
     def saveEntry(self, batch):
-        with self.conn as cur:
-            cur.executemany("INSERT INTO messages VALUES(?,?,?,?,?)",batch)
+        pass
+        #with self.conn as cur:
+        #    cur.executemany("INSERT INTO messages VALUES(?,?,?,?,?)",batch)
         #conn.commit()
 
     # save last available deep
