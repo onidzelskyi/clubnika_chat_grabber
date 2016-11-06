@@ -1,0 +1,7 @@
+scrapy
+Flask-SQLAlchemy
+w3lib
+cssselect
+selenium 
+python-dateutil
+pyvirtualdisplay
