@@ -53,7 +53,7 @@ pip install -e .
 
 ## Prerequests
 
-    sudo apt-get install python-pip python-dev python-lxml
+    sudo apt-get install python-pip python-dev python-lxml libnss3 libgconf2-4
     sudo pip install scrapy w3lib cssselect selenium python-dateutil pyvirtualdisplay
     
     chromedriver
@@ -61,6 +61,7 @@ pip install -e .
     sudo apt-get install unzip
     wget http://chromedriver.storage.googleapis.com/2.20/chromedriver_linux64.zip
     unzip chromedriver_linux64.zip
+    chmod +x chromedriver
     
 
 ## How to use

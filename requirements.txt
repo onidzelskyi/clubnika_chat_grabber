@@ -1,4 +1,5 @@
 scrapy
+<<<<<<< HEAD
 w3lib
 cssselect
 selenium
