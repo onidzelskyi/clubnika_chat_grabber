@@ -1,0 +1,13 @@
+scrapy
+w3lib
+cssselect
+selenium
+python-dateutil
+pyvirtualdisplay
+requests
+flask>=0.11
+flask_sqlalchemy>=2.1
+Flask-Testing>=0.6
+sqlalchemy>=1.1
+configparser>=3.5
+mysql-connector>=2.1

@@ -1,9 +1,55 @@
----
-title: "Clubnika"
-author: "Oleksii"
-date: "July 29, 2015"
-Updated: "October 31, 2015"
----
+Chat grabber.
+==============================
+
+## Environment setup ##
+
+Install virtualenv
+
+```bash
+sudo apt install python-pip
+pip install virtualenvwrapper
+```
+
+Add next lines to ~/.bashrc (~/.profile)
+```bash
+export WORKON_HOME=$HOME/.virtualenvs
+export PROJECT_HOME=$HOME/Devel
+
+# load virtualenvwrapper for python (after custom PATHs)
+venvwrap="virtualenvwrapper.sh"
+/usr/bin/which $venvwrap
+if [ $? -eq 0 ]; then
+    venvwrap=`/usr/bin/which $venvwrap`
+    source $venvwrap
+fi
+```
+
+Run script
+```bash
+. ~/.local/bin/virtualenvwrapper.sh
+```
+
+Create virtual environment for chat grabber app
+```bash
+mkvirtualenv -p python3.5 chat_grabber
+```
+
+## Install dependencies ##
+```bash
+pip install -r requirements.txt
+```
+
+or
+
+```bash
+pip install -e .
+```
+
+## Run app ##
+
+```bash
+./grab_chat.py -u
+```
 
 ## Prerequests
 
@@ -20,7 +66,7 @@ Updated: "October 31, 2015"
 ## How to use
 * 1. Grab chat once at day:
 ```{sh}
-/usr/bin/python grab_chat.py
+./grab_chat.py -u
 ```
 In results will be:
   - created (appended) *clubnika.db* db with the chat messages;

@@ -2,24 +2,33 @@
 
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
+import configparser
 
-import md5
 
+# Read config
+config = configparser.ConfigParser()
+config.read('defaults.cfg')
+
+
+# Flask app
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
+app.config.from_object(config.get('Models', 'app_config'))
 db = SQLAlchemy(app)
+db.create_all()
 
 
 class Message(db.Model):
     __tablename__ = "messages"
     
-    id = db.Column(db.Integer, primary_key=True)
-    timestamp = db.Column(db.Float)
-    date = db.Column(db.String)
-    msg = db.Column(db.String)
-    phone = db.Column(db.String)
-    label = db.Column(db.String)
+    # id = db.Column(db.Integer, primary_key=True)
+    timestamp = db.Column(db.TIMESTAMP)
+    date = db.Column(db.DATE)
+    msg = db.Column(db.String(length=512))
+    phone = db.Column(db.String(length=16))
+    label = db.Column(db.String(length=16))
+
+    # Primary key constraint
+    __table_args__ = (db.PrimaryKeyConstraint('timestamp', 'msg', name='uix_1'),)
 
     def __init__(self, date, timestamp, msg, phone='', label=''):
         self.date = date

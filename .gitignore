@@ -4,3 +4,13 @@ deep.txt
 timestamp.txt
 *.pyc
 .ipynb_checkpoints/
+.idea/
+.swo
+.swp
+data.csv
+demo1.py
+dp.html
+sample.txt
+test.csv
+test.db
+urkgo.ipynb
