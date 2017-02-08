@@ -116,6 +116,7 @@ class Grab(object):
                         check_point = cur_ts + "," + msg_body
                         timestamp = time.mktime(time.strptime(cur_ts, "%d.%m.%y %H:%M"))
                         message = Message(cur_ts, timestamp, msg_body)
+                        print(message)
                         db.session.add(message)
                         db.session.commit()
                         # batch.append((timestamp, cur_ts, msg_body, '', '',))

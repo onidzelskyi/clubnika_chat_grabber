@@ -37,3 +37,6 @@ class Message(db.Model):
         self.phone = phone
         self.label = label
         #self.id = md5.md5(msg.encode('utf-8')).hexdigest()
+
+    def __str__(self):
+        return 'date: {item.date} timestamp: {item.timestamp} msg {item.msg}'.format(item=self)

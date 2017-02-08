@@ -6,7 +6,8 @@ class Config(object):
 
 
 class DevelopmentConfig(Config):
-    SQLALCHEMY_DATABASE_URI = 'mysql+mysqlconnector://test:zhH-WAZ-WhY-d2V@chat-msg.cnoosqac3hj3.us-west-2.rds.amazonaws.com/chat'
+    SQLALCHEMY_DATABASE_URI = 'mysql+mysqlconnector://root:Pass1234@localhost/chat'
+    # SQLALCHEMY_DATABASE_URI = 'mysql+mysqlconnector://test:zhH-WAZ-WhY-d2V@chat-msg.cnoosqac3hj3.us-west-2.rds.amazonaws.com/chat'
     DEBUG = True
 
 
