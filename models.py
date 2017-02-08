@@ -27,7 +27,7 @@ class Message(db.Model):
     __tablename__ = "messages"
     
     # id = db.Column(db.Integer, primary_key=True)
-    timestamp = db.Column(db.TIMESTAMP)
+    # timestamp = db.Column(db.TIMESTAMP)
     date = db.Column(db.DATETIME)
     msg = db.Column(db.String(length=512))
     phone = db.Column(db.String(length=16))
@@ -38,7 +38,7 @@ class Message(db.Model):
 
     def __init__(self, date, timestamp, msg, phone='', label=''):
         self.date = date
-        self.timestamp = timestamp
+        # self.timestamp = timestamp
         self.msg = msg
         self.phone = phone
         self.label = label
