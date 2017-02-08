@@ -112,7 +112,8 @@ class Grab(object):
                     msg_body = sel1.xpath("//span[@class='c1']/text()").extract()
                     if len(msg_body) and len(sel1.xpath("//small/text()").extract()):
                         cur_ts = sel1.xpath("//small/text()").extract()[0]
-                        msg_body = msg_body[0].replace('\n', ' ').replace('\r', '').replace(',', ' ').encode('utf-8')
+                        msg_body = msg_body[0].replace('\n', ' ').replace('\r', '').replace(',', ' ')#.encode('utf-8')
+                        print(msg_body)
                         check_point = cur_ts + "," + msg_body
                         timestamp = time.mktime(time.strptime(cur_ts, "%d.%m.%y %H:%M"))
                         message = Message(cur_ts, timestamp, msg_body)
