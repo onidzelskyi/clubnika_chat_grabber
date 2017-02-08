@@ -50,8 +50,8 @@ class Message(db.Model):
         # self.timestamp = timestamp
         self.msg = msg
         m = hashlib.sha256()
-        m.update(msg)
-        self.msg_checksum = m.h.hexdigest()
+        m.update(msg.encode('utf-8'))
+        self.msg_checksum = m.hexdigest()
         self.phone = phone
         self.label = label
         #self.id = md5.md5(msg.encode('utf-8')).hexdigest()
