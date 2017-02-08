@@ -3,6 +3,7 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 import configparser
+# from sqlalchemy import PrimaryKeyConstraint, Column, MetaData, Table, String, DateTime
 
 
 # Read config
@@ -16,12 +17,15 @@ app.config.from_object(config.get('Models', 'app_config'))
 db = SQLAlchemy(app)
 db.create_all()
 
-# Table('mytable', metadata,
-#       Column('data', String(32)),
-#       mysql_engine='InnoDB',
-#       mysql_charset='utf8',
-#       mysql_key_block_size="1024"
-#      )
+# meta = MetaData()
+# messages = Table('messages', meta,
+#                  Column('date', DateTime),
+#                  Column('msg', String(512)),
+#                  Column('phone', String(16)),
+#                  Column('label', String(16)),
+#                  PrimaryKeyConstraint(['invoice_id', 'ref_num'], ['invoice.invoice_id', 'invoice.ref_num'])
+#                  )
+
 
 class Message(db.Model):
     __tablename__ = "messages"
@@ -34,7 +38,10 @@ class Message(db.Model):
     label = db.Column(db.String(length=16))
 
     # Primary key constraint
-    __table_args__ = (db.PrimaryKeyConstraint('date', 'msg', name='uix_1'),)
+    __table_args__ = (db.PrimaryKeyConstraint('date', 'msg', name='uix_1'),
+                      {'mysql_engine': 'InnoDB',
+                       'mysql_charset': 'utf8'},
+                      )
 
     def __init__(self, date, timestamp, msg, phone='', label=''):
         self.date = date
