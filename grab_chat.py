@@ -116,7 +116,7 @@ class Grab(object):
                         msg_body = msg_body.replace('\n', ' ').replace('\r', '').replace(',', ' ')#.encode('utf-8')
                         print(msg_body)
                         check_point = ','.format(date_text, msg_body)
-                        timestamp = time.mktime(cur_ts, "%d.%m.%y %H:%M")
+                        timestamp = time.mktime(cur_ts)
                         message = Message(cur_ts, timestamp, msg_body)
                         print(message)
                         db.session.add(message)
