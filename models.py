@@ -34,7 +34,7 @@ class Message(db.Model):
     label = db.Column(db.String(length=16))
 
     # Primary key constraint
-    __table_args__ = (db.PrimaryKeyConstraint('timestamp', 'msg', name='uix_1'),)
+    __table_args__ = (db.PrimaryKeyConstraint('date', 'msg', name='uix_1'),)
 
     def __init__(self, date, timestamp, msg, phone='', label=''):
         self.date = date
