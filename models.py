@@ -35,7 +35,7 @@ class Message(db.Model):
     # timestamp = db.Column(db.TIMESTAMP)
     date = db.Column(db.DATETIME)
     msg = db.Column(db.String(length=1024))
-    msg_checksum = db.Column(db.Integer)
+    msg_checksum = db.Column(db.String(length=16))
     phone = db.Column(db.String(length=16))
     label = db.Column(db.String(length=16))
 
