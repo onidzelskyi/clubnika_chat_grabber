@@ -134,7 +134,7 @@ class Grab(object):
                             # print "Outdated"
                             with open(self.work_dir + self.timestamp_file, "wb") as f:
                                 f.write(self.new_checkpoint.encode("utf8"))
-                        # print "%s\n%s\n\n" % (self.old_checkpoint.strip('\n'), check_point.strip('\n'))
+                        print("old: {}\nnew: {}".format(self.old_checkpoint.strip('\n'), check_point.strip('\n')))
                         if self.old_checkpoint.strip('\n') == check_point.strip('\n'):
                             # open(self.work_dir+self.timestamp_file, "w").write(self.new_checkpoint.encode("utf8"))
                             completed = True
