@@ -57,4 +57,4 @@ class Message(db.Model):
         #self.id = md5.md5(msg.encode('utf-8')).hexdigest()
 
     def __str__(self):
-        return 'date: {item.date} msg {item.msg}'.format(item=self)
+        return 'date: {item.date} msg {item.msg}, hash: {item.msg_checksum}'.format(item=self)
