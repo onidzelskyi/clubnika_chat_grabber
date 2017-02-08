@@ -33,7 +33,7 @@ class Message(db.Model):
     # id = db.Column(db.Integer, primary_key=True)
     # timestamp = db.Column(db.TIMESTAMP)
     date = db.Column(db.DATETIME)
-    msg = db.Column(db.String(length=512))
+    msg = db.Column(db.String(length=256))
     phone = db.Column(db.String(length=16))
     label = db.Column(db.String(length=16))
 
