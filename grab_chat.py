@@ -111,11 +111,12 @@ class Grab(object):
                 if len(name) == 0 or name[0] != u'\u041c\u043e\u0434\u0435\u0440':
                     msg_body = sel1.xpath("//span[@class='c1']/text()").extract()
                     if len(msg_body) and len(sel1.xpath("//small/text()").extract()):
-                        cur_ts = sel1.xpath("//small/text()").extract()[0]
+                        date_text = sel1.xpath("//small/text()").extract()[0]
+                        cur_ts = time.strptime(date_text, "%d.%m.%y %H:%M")
                         msg_body = msg_body[0].replace('\n', ' ').replace('\r', '').replace(',', ' ')#.encode('utf-8')
                         print(msg_body)
                         check_point = cur_ts + "," + msg_body
-                        timestamp = time.mktime(time.strptime(cur_ts, "%d.%m.%y %H:%M"))
+                        timestamp = time.mktime(cur_ts, "%d.%m.%y %H:%M")
                         message = Message(cur_ts, timestamp, msg_body)
                         print(message)
                         db.session.add(message)

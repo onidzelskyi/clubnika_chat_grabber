@@ -6,7 +6,7 @@ Chat grabber.
 Install virtualenv
 
 ```bash
-sudo apt install python-pip
+sudo apt install python-pip python3-dev libffi-dev libssl-dev libxml2-dev libxslt1-dev libjpeg8-dev zlib1g-dev
 pip install virtualenvwrapper
 ```
 

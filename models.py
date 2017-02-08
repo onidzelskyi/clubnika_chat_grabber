@@ -16,6 +16,12 @@ app.config.from_object(config.get('Models', 'app_config'))
 db = SQLAlchemy(app)
 db.create_all()
 
+# Table('mytable', metadata,
+#       Column('data', String(32)),
+#       mysql_engine='InnoDB',
+#       mysql_charset='utf8',
+#       mysql_key_block_size="1024"
+#      )
 
 class Message(db.Model):
     __tablename__ = "messages"
