@@ -115,16 +115,12 @@ class Grab(object):
                         date_text = sel1.xpath("//small/text()").extract_first()
                         cur_ts = time.strptime(date_text, "%d.%m.%y %H:%M")
                         msg_body = msg_body.replace('\n', ' ').replace('\r', '').replace(',', ' ')
-                        print(msg_body)
+                        # print(msg_body)
                         check_point = '{},{}'.format(date_text, msg_body)
                         timestamp = time.mktime(cur_ts)
                         message = Message(cur_ts, timestamp, msg_body)
-                        print(message)
+                        # print(message)
                         db.session.add(message)
-                        try:
-                            db.session.commit()
-                        except IntegrityError:
-                            db.session.rollback()
                         # batch.append((timestamp, cur_ts, msg_body, '', '',))
                         # At the first touch save new checkpoint
                         if self.new_checkpoint == EMPTY_CHECKPOINT: self.new_checkpoint = check_point.strip("\n")
@@ -134,12 +130,18 @@ class Grab(object):
                             # print "Outdated"
                             with open(self.work_dir + self.timestamp_file, "wb") as f:
                                 f.write(self.new_checkpoint.encode("utf8"))
-                        print("old: {}\nnew: {}".format(self.old_checkpoint.strip('\n'), check_point.strip('\n')))
+                        # print("old: {}\nnew: {}".format(self.old_checkpoint.strip('\n'), check_point.strip('\n')))
                         if self.old_checkpoint.strip('\n') == check_point.strip('\n'):
                             # open(self.work_dir+self.timestamp_file, "w").write(self.new_checkpoint.encode("utf8"))
                             completed = True
                             break
                         if self.old_checkpoint == EMPTY_CHECKPOINT: self.old_checkpoint = self.new_checkpoint
+
+            try:
+                db.session.commit()
+            except IntegrityError:
+                db.session.rollback()
+
             # os._exit(0)
             if CHECK_PHONE:
                 batch = self.checkPhone(batch)
