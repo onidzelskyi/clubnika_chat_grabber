@@ -4,7 +4,6 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 import configparser
 import hashlib
-# from sqlalchemy import PrimaryKeyConstraint, Column, MetaData, Table, String, DateTime
 
 
 # Read config

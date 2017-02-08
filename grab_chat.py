@@ -14,41 +14,23 @@ import argparse  # Arguments parser
 import time  # sleep
 from sqlalchemy.exc import IntegrityError
 
-from models import db, Message
-
-# Constants
-# File name of sqlite database will be stored
-# DB_FILE_NAME = "clubnika.db"
-# File name of message we start to grab last time
-TIMESTAMP_FILE = "/timestamp.txt"
-# File name of url' page number
-DEEP_FILE = "/deep.txt"
-# URL of the service we grab for
-SERVICE_URL = "http://clubnika.com.ua/home/"
-# We start to grab form first page
-DEEP_BEGIN = 1
-# sql query to create table for storing the data we recieve from the service
-# SQL_CREATE_QUERY = "CREATE TABLE IF NOT EXISTS messages(timestamp DATE, published TEXT, msg TEXT, phone TEXT, label TEXT)"
-EMPTY_CHECKPOINT = ""
-# Timeout between GET requests in seconds
-TIMEOUT = 1
-# Empirical value for phone extraction
-MAX_STEP_SIZE = 7
-CHECK_PHONE = 0
-CLASSIFY = 0
+from models import db, Message, config
 
 
-# class Grab
 class Grab(object):
+    """Grab interface."""
     def __init__(self):
         self.work_dir = os.path.dirname(os.path.abspath(__file__))
-        self.timestamp_file = TIMESTAMP_FILE
-        self.deep_file = DEEP_FILE
-        self.url = SERVICE_URL
-        self.deep = DEEP_BEGIN
-        self.old_checkpoint = EMPTY_CHECKPOINT
-        self.new_checkpoint = EMPTY_CHECKPOINT
-        # self.conn = sqlite3.connect(DB_FILE_NAME)
+        self.timestamp_file = config.getint('Grab', 'timestamp_file')
+        self.deep_file = config.getint('Grab', 'deep_file')
+        self.url = config.getint('Grab', 'url')
+        self.deep = config.getint('Grab', 'deep')
+        self.old_checkpoint = config.getint('Grab', 'old_checkpoint')
+        self.new_checkpoint = config.getint('Grab', 'new_checkpoint')
+        self.timeout = config.getint('Grab', 'timeout')
+        self.check_phone = config.getint('Grab', 'check_phone')
+        self.classify = config.getint('Grab', 'classify')
+        self.max_step_size = config.getint('Grab', 'max_step_size')
 
     def load(self):
         self.parseArgs()
@@ -90,8 +72,7 @@ class Grab(object):
         s1 = Session()
         completed = False
         while (not completed):
-            time.sleep(TIMEOUT)
-            # print "deep: %d" % self.deep
+            time.sleep(self.timeout)
             batch = []
             url_tv_chat = "http://clubnika.com.ua/tv-chat/?action=view&room=1&page=" + str(self.deep)
             req1 = Request('GET', url_tv_chat, cookies=resp.cookies, headers=header)
@@ -102,7 +83,11 @@ class Grab(object):
             prepped1.headers[
                 "User-Agent"] = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_4) AppleWebKit/600.7.12 (KHTML, like Gecko) Version/8.0.7 Safari/600.7.12"
             resp1 = s1.send(prepped1)
-            open("/tmp/clubnika.html", "wb").write(resp1.content)
+
+            # Save received page for rendering
+            with open("/tmp/clubnika.html", "wb") as fp:
+                fp.write(resp1.content)
+
             browser.get("file:///tmp/clubnika.html")
             sel = Selector(text=browser.page_source)
             blocks = sel.xpath("//div[@class='p10']").extract()
@@ -115,37 +100,34 @@ class Grab(object):
                         date_text = sel1.xpath("//small/text()").extract_first()
                         cur_ts = time.strptime(date_text, "%d.%m.%y %H:%M")
                         msg_body = msg_body.replace('\n', ' ').replace('\r', '').replace(',', ' ')
-                        # print(msg_body)
                         check_point = '{},{}'.format(date_text, msg_body)
                         timestamp = time.mktime(cur_ts)
                         message = Message(cur_ts, timestamp, msg_body)
-                        # print(message)
                         db.session.add(message)
                         # batch.append((timestamp, cur_ts, msg_body, '', '',))
                         # At the first touch save new checkpoint
-                        if self.new_checkpoint == EMPTY_CHECKPOINT: self.new_checkpoint = check_point.strip("\n")
+                        if self.new_checkpoint == '':
+                            self.new_checkpoint = check_point.strip("\n")
 
-                        # if self.old_checkpoint==EMPTY_CHECKPOINT and self.args.update:
-                        if self.old_checkpoint == EMPTY_CHECKPOINT or self.outdated():
-                            # print "Outdated"
-                            with open(self.work_dir + self.timestamp_file, "wb") as f:
-                                f.write(self.new_checkpoint.encode("utf8"))
-                        # print("old: {}\nnew: {}".format(self.old_checkpoint.strip('\n'), check_point.strip('\n')))
+                        if self.old_checkpoint == '' or self.outdated():
+                            with open(self.work_dir + self.timestamp_file, "wb") as fp:
+                                fp.write(self.new_checkpoint.encode("utf8"))
+
                         if self.old_checkpoint.strip('\n') == check_point.strip('\n'):
-                            # open(self.work_dir+self.timestamp_file, "w").write(self.new_checkpoint.encode("utf8"))
                             completed = True
                             break
-                        if self.old_checkpoint == EMPTY_CHECKPOINT: self.old_checkpoint = self.new_checkpoint
+
+                        if self.old_checkpoint == '':
+                            self.old_checkpoint = self.new_checkpoint
 
             try:
                 db.session.commit()
             except IntegrityError:
                 db.session.rollback()
 
-            # os._exit(0)
-            if CHECK_PHONE:
+            if self.check_phone:
                 batch = self.checkPhone(batch)
-            if CLASSIFY:
+            if self.classify:
                 batch = self.classify(batch)
             self.saveEntry(batch)
 
@@ -161,7 +143,7 @@ class Grab(object):
         # If the program run in update mode
         # and file with the last timestamp exists
         # then load old checkpoint
-        self.old_checkpoint = EMPTY_CHECKPOINT
+        self.old_checkpoint = ''
         if os.path.exists(self.work_dir + self.timestamp_file):
             self.old_checkpoint = codecs.open(self.work_dir + self.timestamp_file, encoding="utf-8").read()
 
@@ -183,8 +165,6 @@ class Grab(object):
 
     # save last available deep
     def outdated(self):
-        # print "self.old_checkpoint: ", self.old_checkpoint
-        # print "self.new_checkpoint: ", self.new_checkpoint
         return True if self.args.update and self.old_checkpoint != self.new_checkpoint else False
 
     ##
@@ -215,7 +195,7 @@ class Grab(object):
             phones = []
             for c in str:
                 if c.isdigit():
-                    if i < MAX_STEP_SIZE:
+                    if i < self.max_step_size:
                         i = 0
                         phone = phone + c
                     elif len(phone):
