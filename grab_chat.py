@@ -128,7 +128,7 @@ class Grab(object):
                         # if self.old_checkpoint==EMPTY_CHECKPOINT and self.args.update:
                         if self.old_checkpoint == EMPTY_CHECKPOINT or self.outdated():
                             # print "Outdated"
-                            with open(self.work_dir + self.timestamp_file, "w") as f:
+                            with open(self.work_dir + self.timestamp_file, "wb") as f:
                                 f.write(self.new_checkpoint.encode("utf8"))
                         # print "%s\n%s\n\n" % (self.old_checkpoint.strip('\n'), check_point.strip('\n'))
                         if self.old_checkpoint.strip('\n') == check_point.strip('\n'):
@@ -172,7 +172,7 @@ class Grab(object):
 
     # save last available deep
     def saveDeep(self):
-        with open(self.work_dir + self.deep_file, "w") as f:
+        with open(self.work_dir + self.deep_file, "wb") as f:
             f.write(str(self.deep))
 
     # save last available deep
