@@ -34,7 +34,7 @@ EMPTY_CHECKPOINT = ""
 TIMEOUT = 1
 # Empirical value for phone extraction
 MAX_STEP_SIZE = 7
-CHECK_PHONE = 1
+CHECK_PHONE = 0
 CLASSIFY = 0
 
 
@@ -111,7 +111,7 @@ class Grab(object):
                 name = sel1.xpath('//div[@class="p10"]/b/text()').extract()
                 if len(name) == 0 or name[0] != u'\u041c\u043e\u0434\u0435\u0440':
                     msg_body = sel1.xpath("//span[@class='c1']/text()").extract_first()
-                    if len(msg_body) and len(sel1.xpath("//small/text()").extract()):
+                    if msg_body and len(sel1.xpath("//small/text()").extract()):
                         date_text = sel1.xpath("//small/text()").extract_first()
                         cur_ts = time.strptime(date_text, "%d.%m.%y %H:%M")
                         msg_body = msg_body.replace('\n', ' ').replace('\r', '').replace(',', ' ')
