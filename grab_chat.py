@@ -12,6 +12,7 @@ import json
 from pyvirtualdisplay import Display
 import argparse  # Arguments parser
 import time  # sleep
+from sqlalchemy.exc import IntegrityError
 
 from models import db, Message
 
@@ -113,14 +114,17 @@ class Grab(object):
                     if len(msg_body) and len(sel1.xpath("//small/text()").extract()):
                         date_text = sel1.xpath("//small/text()").extract_first()
                         cur_ts = time.strptime(date_text, "%d.%m.%y %H:%M")
-                        msg_body = msg_body.replace('\n', ' ').replace('\r', '').replace(',', ' ')#.encode('utf-8')
+                        msg_body = msg_body.replace('\n', ' ').replace('\r', '').replace(',', ' ')
                         print(msg_body)
                         check_point = ','.format(date_text, msg_body)
                         timestamp = time.mktime(cur_ts)
                         message = Message(cur_ts, timestamp, msg_body)
                         print(message)
                         db.session.add(message)
-                        db.session.commit()
+                        try:
+                            db.session.commit()
+                        except IntegrityError:
+                            db.session.rollback()
                         # batch.append((timestamp, cur_ts, msg_body, '', '',))
                         # At the first touch save new checkpoint
                         if self.new_checkpoint == EMPTY_CHECKPOINT: self.new_checkpoint = check_point.strip("\n")
