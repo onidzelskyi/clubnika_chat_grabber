@@ -116,7 +116,7 @@ class Grab(object):
                         cur_ts = time.strptime(date_text, "%d.%m.%y %H:%M")
                         msg_body = msg_body.replace('\n', ' ').replace('\r', '').replace(',', ' ')
                         print(msg_body)
-                        check_point = ','.format(date_text, msg_body)
+                        check_point = '{},{}'.format(date_text, msg_body)
                         timestamp = time.mktime(cur_ts)
                         message = Message(cur_ts, timestamp, msg_body)
                         print(message)
