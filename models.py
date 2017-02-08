@@ -3,6 +3,7 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 import configparser
+import hashlib
 # from sqlalchemy import PrimaryKeyConstraint, Column, MetaData, Table, String, DateTime
 
 
@@ -33,12 +34,13 @@ class Message(db.Model):
     # id = db.Column(db.Integer, primary_key=True)
     # timestamp = db.Column(db.TIMESTAMP)
     date = db.Column(db.DATETIME)
-    msg = db.Column(db.String(length=256))
+    msg = db.Column(db.String(length=1024))
+    msg_checksum = db.Column(db.Integer)
     phone = db.Column(db.String(length=16))
     label = db.Column(db.String(length=16))
 
     # Primary key constraint
-    __table_args__ = (db.PrimaryKeyConstraint('date', 'msg', name='uix_1'),
+    __table_args__ = (db.PrimaryKeyConstraint('date', 'msg_checksum', name='uix_1'),
                       {'mysql_engine': 'InnoDB',
                        'mysql_charset': 'utf8'},
                       )
@@ -47,6 +49,9 @@ class Message(db.Model):
         self.date = date
         # self.timestamp = timestamp
         self.msg = msg
+        m = hashlib.sha256()
+        m.update(msg)
+        self.msg_checksum = m.h.hexdigest()
         self.phone = phone
         self.label = label
         #self.id = md5.md5(msg.encode('utf-8')).hexdigest()
