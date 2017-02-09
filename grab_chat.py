@@ -74,7 +74,7 @@ class Grab(object):
         while not completed:
             time.sleep(self.timeout)
             batch = []
-            url_tv_chat = "http://clubnika.com.ua/tv-chat/?action=view&room=1&page=" + str(self.deep)
+            url_tv_chat = "http://clubnika.com.ua/tv-chat/?action=view&room=1&page={}".format(self.deep)
             req1 = Request('GET', url_tv_chat, cookies=resp.cookies, headers=header)
             prepped1 = req1.prepare()
 
@@ -107,14 +107,12 @@ class Grab(object):
                 if len(name) == 0 or name[0] != u'\u041c\u043e\u0434\u0435\u0440':
                     msg_body = sel1.xpath("//span[@class='c1']/text()").extract_first()
                     if msg_body and len(sel1.xpath("//small/text()").extract()):
-                        print('body: {}'.format(msg_body))
                         date_text = sel1.xpath("//small/text()").extract_first()
                         cur_ts = time.strptime(date_text, "%d.%m.%y %H:%M")
                         msg_body = msg_body.replace('\n', ' ').replace('\r', '').replace(',', ' ')
                         check_point = '{},{}'.format(date_text, msg_body)
                         timestamp = time.mktime(cur_ts)
                         message = Message(cur_ts, timestamp, msg_body)
-                        print(message)
                         db.session.add(message)
                         # batch.append((timestamp, cur_ts, msg_body, '', '',))
                         # At the first touch save new checkpoint
