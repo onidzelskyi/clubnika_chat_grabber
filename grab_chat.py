@@ -92,7 +92,8 @@ class Grab(object):
             sel = Selector(text=browser.page_source)
 
             # Close tab to avoid memory overflow
-            browser.close()
+            if self.deep > 1:
+                browser.close()
 
             blocks = sel.xpath("//div[@class='p10']").extract()
 
