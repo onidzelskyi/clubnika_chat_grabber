@@ -43,8 +43,8 @@ class Grab(object):
     def run(self):
         self.fetch_msg()
 
-    def create_db(self):
-        db.create_all()
+    # def create_db(self):
+    #     db.create_all()
 
     def fetch_msg(self):
         # Create session
@@ -113,6 +113,7 @@ class Grab(object):
                         check_point = '{},{}'.format(date_text, msg_body)
                         timestamp = time.mktime(cur_ts)
                         message = Message(cur_ts, timestamp, msg_body)
+                        print(message)
                         db.session.add(message)
                         # batch.append((timestamp, cur_ts, msg_body, '', '',))
                         # At the first touch save new checkpoint
