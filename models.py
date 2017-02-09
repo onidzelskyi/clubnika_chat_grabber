@@ -3,7 +3,17 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 import configparser
+import logging
 import hashlib
+
+
+# Logger
+logging.basicConfig(level=logging.DEBUG,
+                    format='%(asctime)s %(name)-12s %(levelname)-8s %(message)s',
+                    datefmt='%m-%d %H:%M',
+                    filename='matching.log',
+                    filemode='w')
+logger = logging.getLogger(__name__)
 
 
 # Read config

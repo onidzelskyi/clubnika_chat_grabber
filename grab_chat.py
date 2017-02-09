@@ -20,7 +20,7 @@ from pyvirtualdisplay import Display
 
 from sqlalchemy.exc import IntegrityError
 
-from models import db, Message, config
+from models import db, Message, config, logger
 
 
 class Grab(object):
@@ -84,6 +84,7 @@ class Grab(object):
             time.sleep(self.timeout)
             batch = []
             url_tv_chat = "http://clubnika.com.ua/tv-chat/?action=view&room=1&page={}".format(self.deep)
+            logger.info('URL: {}'.format(url_tv_chat))
             req1 = Request('GET', url_tv_chat, cookies=resp.cookies, headers=header)
             prepped1 = req1.prepare()
 
@@ -125,6 +126,7 @@ class Grab(object):
                         check_point = '{},{}'.format(date_text, msg_body)
                         timestamp = time.mktime(cur_ts)
                         message = Message(cur_ts, timestamp, msg_body)
+                        logger.info('Message: {}'.format(message))
                         db.session.add(message)
                         # batch.append((timestamp, cur_ts, msg_body, '', '',))
                         # At the first touch save new checkpoint
