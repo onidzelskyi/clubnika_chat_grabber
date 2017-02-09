@@ -90,6 +90,10 @@ class Grab(object):
 
             browser.get("file:///tmp/clubnika.html")
             sel = Selector(text=browser.page_source)
+
+            # Close tab to avoid memory overflow
+            browser.close()
+
             blocks = sel.xpath("//div[@class='p10']").extract()
 
             # Check if no messages then exit
@@ -142,6 +146,9 @@ class Grab(object):
 
         # Save current deep
         if self.args.dig: self.saveDeep()
+
+        # Exit browser
+        browser.quit()
 
     # load last available checkpoint
     def loadOldCheckPoint(self):
