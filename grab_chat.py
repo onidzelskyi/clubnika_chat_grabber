@@ -21,12 +21,12 @@ class Grab(object):
     """Grab interface."""
     def __init__(self):
         self.work_dir = os.path.dirname(os.path.abspath(__file__))
-        self.timestamp_file = config.getint('Grab', 'timestamp_file')
-        self.deep_file = config.getint('Grab', 'deep_file')
-        self.url = config.getint('Grab', 'url')
+        self.timestamp_file = config.get('Grab', 'timestamp_file')
+        self.deep_file = config.get('Grab', 'deep_file')
+        self.url = config.get('Grab', 'url')
         self.deep = config.getint('Grab', 'deep')
-        self.old_checkpoint = config.getint('Grab', 'old_checkpoint')
-        self.new_checkpoint = config.getint('Grab', 'new_checkpoint')
+        self.old_checkpoint = config.get('Grab', 'old_checkpoint')
+        self.new_checkpoint = config.get('Grab', 'new_checkpoint')
         self.timeout = config.getint('Grab', 'timeout')
         self.check_phone = config.getint('Grab', 'check_phone')
         self.classify = config.getint('Grab', 'classify')
