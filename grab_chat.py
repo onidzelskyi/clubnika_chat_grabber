@@ -34,7 +34,7 @@ class Grab(object):
 
     def load(self):
         self.parseArgs()
-        self.create_db()
+        # self.create_db()
         self.loadOldCheckPoint()
         self.loadDeep()
         # Add current path to PATH environment variable for chrome driver
