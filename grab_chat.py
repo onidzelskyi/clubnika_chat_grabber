@@ -2,16 +2,22 @@
 # -*- coding: utf-8 -*-
 
 from scrapy import Selector
+
 from requests import Request, Session
+
 from selenium import webdriver
+from selenium.webdriver.common.keys import Keys
+
 import os.path
 import codecs
 import re
 import requests
 import json
-from pyvirtualdisplay import Display
 import argparse  # Arguments parser
 import time  # sleep
+
+from pyvirtualdisplay import Display
+
 from sqlalchemy.exc import IntegrityError
 
 from models import db, Message, config
@@ -69,6 +75,9 @@ class Grab(object):
         display.start()
         browser = webdriver.Chrome()
 
+        # Open new window
+        browser.get(self.url)
+
         s1 = Session()
         completed = False
         while not completed:
@@ -88,12 +97,14 @@ class Grab(object):
             with open("/tmp/clubnika.html", "wb") as fp:
                 fp.write(resp1.content)
 
+            # Open new tab
+            browser.find_element_by_tag_name('body').send_keys(Keys.CONTROL + 't')
+
             browser.get("file:///tmp/clubnika.html")
             sel = Selector(text=browser.page_source)
 
             # Close tab to avoid memory overflow
-            if self.deep > 1:
-                browser.close()
+            browser.find_element_by_tag_name('body').send_keys(Keys.CONTROL + 'w')
 
             blocks = sel.xpath("//div[@class='p10']").extract()
 
