@@ -107,6 +107,7 @@ class Grab(object):
                 if len(name) == 0 or name[0] != u'\u041c\u043e\u0434\u0435\u0440':
                     msg_body = sel1.xpath("//span[@class='c1']/text()").extract_first()
                     if msg_body and len(sel1.xpath("//small/text()").extract()):
+                        print('body: {}'.format(msg_body))
                         date_text = sel1.xpath("//small/text()").extract_first()
                         cur_ts = time.strptime(date_text, "%d.%m.%y %H:%M")
                         msg_body = msg_body.replace('\n', ' ').replace('\r', '').replace(',', ' ')
