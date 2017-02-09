@@ -71,7 +71,7 @@ class Grab(object):
 
         s1 = Session()
         completed = False
-        while (not completed):
+        while not completed:
             time.sleep(self.timeout)
             batch = []
             url_tv_chat = "http://clubnika.com.ua/tv-chat/?action=view&room=1&page=" + str(self.deep)
@@ -91,6 +91,12 @@ class Grab(object):
             browser.get("file:///tmp/clubnika.html")
             sel = Selector(text=browser.page_source)
             blocks = sel.xpath("//div[@class='p10']").extract()
+
+            # Check if no messages then exit
+            # Probably we get in login page
+            if not blocks:
+                break
+
             for block in blocks:
                 sel1 = Selector(text=block)
                 name = sel1.xpath('//div[@class="p10"]/b/text()').extract()
