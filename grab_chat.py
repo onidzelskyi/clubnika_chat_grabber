@@ -47,7 +47,11 @@ class Grab(object):
         os.environ["PATH"] += os.pathsep + self.work_dir
 
     def run(self):
-        self.fetch_msg()
+        old_deep = 0
+        # Run until fetch_msg takes zerp pages span
+        while old_deep != self.deep:
+            old_deep = self.deep
+            self.fetch_msg()
 
     # def create_db(self):
     #     db.create_all()
